@@ -44,6 +44,17 @@ import {ExtraComponentsModule} from '../extra-components/extra-components.module
 import {VulnerabilitySourceComponent} from '../extra-components/vulnerability-source-component';
 import {StatusComponent} from '../extra-components/status-component';
 import {ClassificationColorComponent} from '../extra-components/classification-color.component';
+import { ProjectDetailsComponent } from './project-details/project-details.component';
+import {ChartModule} from 'angular2-chartjs';
+import {ProjectRiskChartComponent} from './project-details/project-risk-chart';
+import {Ng2PageScrollModule} from 'ng2-page-scroll';
+import {DetailsCartsComponent} from './details-carts/details-carts.component';
+import {ProgressChartComponent} from './progress-chart/progress-chart.component';
+import {TimelineComponent} from './timeline/timeline.component';
+import {TimelineModule} from 'primeng/timeline';
+import {CardModule} from 'primeng/card';
+import { StatusCardComponent } from './status-card/status-card.component';
+import { TrendChartComponent } from './trend-chart/trend-chart.component';
 
 @NgModule({
   declarations: [
@@ -67,6 +78,14 @@ import {ClassificationColorComponent} from '../extra-components/classification-c
     DescriptionToggleComponent,
     AuditResultColorComponent,
     AnalysisColorComponent,
+    DetailsComponent,
+    ProjectDetailsComponent,
+    ProjectRiskChartComponent,
+    DetailsCartsComponent,
+    ProgressChartComponent,
+    TimelineComponent,
+    StatusCardComponent,
+    TrendChartComponent,
   ],
   imports: [
     CommonModule,
@@ -91,6 +110,10 @@ import {ClassificationColorComponent} from '../extra-components/classification-c
     ExtraComponentsModule,
     NbRadioModule,
     FormsModule,
+    ChartModule,
+    Ng2PageScrollModule,
+    TimelineModule,
+    CardModule,
   ],
   providers: [
     ShowProjectService,

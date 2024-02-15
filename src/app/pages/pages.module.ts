@@ -28,6 +28,11 @@ import { UserProfileComponent } from './user-profile/user-profile.component';
 import { KnowlegeBaseComponent } from './knowlege-base/knowlege-base.component';
 import { VulnerabilitiesComponent } from './knowlege-base/vulnerabilities/vulnerabilities.component';
 import { CisRequirementsComponent } from './knowlege-base/cis-requirements/cis-requirements.component';
+import { ScansComponent } from './scans/scans.component';
+import {ExtraComponentsModule} from './extra-components/extra-components.module';
+import { GlobalStatisticComponent } from './global-statistic/global-statistic.component';
+import {NgxEchartsModule} from "ngx-echarts";
+import { StatsDashboardComponent } from './stats-dashboard/stats-dashboard.component';
 
 @NgModule({
     imports: [
@@ -51,6 +56,8 @@ import { CisRequirementsComponent } from './knowlege-base/cis-requirements/cis-r
         NbInputModule,
         NbSelectModule,
         ReactiveFormsModule,
+        ExtraComponentsModule,
+        NgxEchartsModule,
     ],
   declarations: [
     PagesComponent,
@@ -60,6 +67,9 @@ import { CisRequirementsComponent } from './knowlege-base/cis-requirements/cis-r
     KnowlegeBaseComponent,
     VulnerabilitiesComponent,
     CisRequirementsComponent,
+    ScansComponent,
+    GlobalStatisticComponent,
+    StatsDashboardComponent,
   ],
   providers: [
     {

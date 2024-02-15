@@ -1,14 +1,14 @@
 import { NgModule } from '@angular/core';
 import {
-  NbButtonModule,
-  NbCardModule,
-  NbProgressBarModule,
-  NbTabsetModule,
-  NbUserModule,
-  NbIconModule,
-  NbSelectModule,
-  NbListModule, NbSpinnerModule,
-  NbAlertModule,
+    NbButtonModule,
+    NbCardModule,
+    NbProgressBarModule,
+    NbTabsetModule,
+    NbUserModule,
+    NbIconModule,
+    NbSelectModule,
+    NbListModule, NbSpinnerModule,
+    NbAlertModule, NbAccordionModule,
 } from '@nebular/theme';
 import { NgxEchartsModule } from 'ngx-echarts';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
@@ -28,28 +28,31 @@ import { Ng2SmartTableModule } from 'ng2-smart-table';
 import {ExtraComponentsModule} from '../extra-components/extra-components.module';
 import {DashboardChartService} from './dashboard-charts/dashboard-chart.service';
 import {DashboardService} from '../../@core/service/DashboardService';
+import {ReactiveFormsModule} from "@angular/forms";
 
 @NgModule({
-  imports: [
-    ThemeModule,
-    NbCardModule,
-    NbUserModule,
-    NbButtonModule,
-    NbIconModule,
-    NbTabsetModule,
-    NbSelectModule,
-    NbListModule,
-    ChartModule,
-    NbProgressBarModule,
-    NgxEchartsModule,
-    NgxChartsModule,
-    LeafletModule,
-    ProjectTablesModule,
-    Ng2SmartTableModule,
-    ExtraComponentsModule,
-    NbSpinnerModule,
-    NbAlertModule,
-  ],
+    imports: [
+        ThemeModule,
+        NbCardModule,
+        NbUserModule,
+        NbButtonModule,
+        NbIconModule,
+        NbTabsetModule,
+        NbSelectModule,
+        NbListModule,
+        ChartModule,
+        NbProgressBarModule,
+        NgxEchartsModule,
+        NgxChartsModule,
+        LeafletModule,
+        ProjectTablesModule,
+        Ng2SmartTableModule,
+        ExtraComponentsModule,
+        NbSpinnerModule,
+        NbAlertModule,
+        NbAccordionModule,
+        ReactiveFormsModule,
+    ],
   declarations: [
     MixerDashboardComponent,
     TrendChartComponent,

@@ -1,4 +1,4 @@
-import {Component, ElementRef, OnInit, TemplateRef, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, ElementRef, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {Risk} from '../../@core/Model/Risk';
 import {ShowProjectService} from '../../@core/service/ShowProjectService';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -10,7 +10,11 @@ import {NbDialogService, NbWindowService} from '@nebular/theme';
 import {FormBuilder} from '@angular/forms';
 import {Toast} from '../../@core/utils/Toast';
 import {ProjectInfo} from '../../@core/Model/ProjectInfo';
-import {Template} from '@angular/compiler/src/render3/r3_ast';
+import {VulnTrendChart} from '../../@core/Model/VulnTrendChart';
+import {Severities} from '../../@core/Model/Severities';
+import {ProjectStats} from '../../@core/Model/ProjectStats';
+import {ProjectUser} from '../../@core/Model/ProjectUser';
+
 
 @Component({
   selector: 'ngx-show-project',
@@ -29,6 +33,7 @@ export class ShowProjectComponent implements OnInit {
   projectInfo: ProjectInfo = new ProjectInfo;
   _entityId: any;
   ciOperations: CiOperations[];
+  ciOperationSuccessRate: any;
   scannerTypes: ScannerType[];
   showConfigTemplate: boolean;
   showVulnAuditor: boolean;
@@ -36,12 +41,20 @@ export class ShowProjectComponent implements OnInit {
   showDetailsTemplate: boolean;
   role: string;
   constants: ProjectConstants = new ProjectConstants();
+  vulnTrendChart: VulnTrendChart;
   @ViewChild('showInstructions') showInstructions: TemplateRef<any>;
   hostname: string;
+  severities: Severities;
+  severitiesChartData: any = [];
+  projectStats: ProjectStats;
+
   private vulnAuditorForm: any;
+  private projectUserForm: any;
+  projectUser: ProjectUser = new ProjectUser;
   constructor(private showProjectService: ShowProjectService, private _route: ActivatedRoute, private router: Router,
               private cookieService: CookieService, private dialogService: NbDialogService,
-              private formBuilder: FormBuilder, private toast: Toast, private windowService: NbWindowService) {
+              private formBuilder: FormBuilder, private toast: Toast, private windowService: NbWindowService,
+              private cdRef: ChangeDetectorRef) {
     this._entityId = +this._route.snapshot.paramMap.get('projectid');
     if (!this._entityId) {
       this.router.navigate(['/pages/dashboard']);
@@ -50,12 +63,31 @@ export class ShowProjectComponent implements OnInit {
     this.loadScannerTypes();
     this.loadProjectInfo();
     this.loadCiOperations();
+    this.loadTrendChartData();
+    this.loadProjectStats();
     this.vulnAuditorForm = this.formBuilder.group({
       enableVulnAuditor: this.projectInfo.vulnAuditorEnable,
       dclocation: this.projectInfo.networkdc,
       appClient: this.projectInfo.appClient,
     });
+    this.projectUserForm = this.formBuilder.group({
+      user: this.projectUser.user,
+    });
     this.updateShowDockerInfo();
+  }
+  loadTrendChartData() {
+    return this.showProjectService.getVulnTrendChart(this._entityId).subscribe(data => {
+      this.vulnTrendChart = data;
+    });
+  }
+  loadSeveritiesChart() {
+    return this.showProjectService.getSeverityChart(this._entityId).subscribe(data => {
+      this.severities = data;
+      this.severitiesChartData.push({value: data.Low, name: 'Low'});
+      this.severitiesChartData.push({value: data.High, name: 'High'});
+      this.severitiesChartData.push({value: data.Critical, name: 'Critical'});
+      this.severitiesChartData.push({value: data.Medium, name: 'Medium'});
+    });
   }
   updateShowDockerInfo() {
     const url = window.location.href;
@@ -72,6 +104,11 @@ export class ShowProjectComponent implements OnInit {
         dclocation: data.networkdc,
         appClient: data.appClient,
       });
+    });
+  }
+  loadProjectStats() {
+    return this.showProjectService.getProjectStats(this._entityId).subscribe(data => {
+      this.projectStats = data;
     });
   }
   drawRiskCards(id) {
@@ -96,10 +133,10 @@ export class ShowProjectComponent implements OnInit {
         this.risk?.codeRepoNumber === 0 &&
         this.risk?.assetNumber === 0 &&
         this.risk?.audit === 0) {
-          this.windowService.open(
-            this.showInstructions,
-            { title: 'First step instruction', context: { text: 'some text to pass into template' } },
-          );
+          // this.windowService.open(
+          //   this.showInstructions,
+          //   { title: 'First step instruction', context: { text: 'some text to pass into template' } },
+          // );
       }
     });
   }
@@ -112,25 +149,30 @@ export class ShowProjectComponent implements OnInit {
   loadCiOperations() {
     return this.showProjectService.getCiForProject(this._entityId).subscribe(data => {
       this.ciOperations = data.sort((a, b) => a.id > b.id ? -1 : a.id < b.id ? 1 : 0);
-
+      const success = this.ciOperations.filter((operation) => operation.result === 'Ok').length;
+      this.ciOperationSuccessRate = Math.round((success / this.ciOperations.length) * 100);
     });
   }
   ngOnInit() {
+    this.loadSeveritiesChart();
     this.role = this.cookieService.get('role');
     this.showConfigTemplate = this.role !== 'ROLE_ADMIN' && this.role !== 'ROLE_EDITOR_RUNNER';
     this.showVulnAuditor = true;
     this.showDetailsTemplate = true;
+    this.cdRef.detectChanges();
   }
 
   showConfig() {
     this.showConfigTableTemplate = true;
     this.showConfigTemplate = true;
     this.showDetailsTemplate = false;
+    this.cdRef.detectChanges();
   }
   showDetails() {
     this.showConfigTableTemplate = false;
     this.showDetailsTemplate = true;
     this.showConfigTemplate = false;
+    this.cdRef.detectChanges();
   }
   riskCardBuilder (name, inventoryName, inventoryCount, risk) {
     return {
@@ -161,5 +203,25 @@ export class ShowProjectComponent implements OnInit {
         this.toast.showToast('danger', this.constants.PROJECT_OPERATION_FAILURE,
           this.constants.PROJECT_OPERATION_FAILURES);
       });
+  }
+
+
+  saveProjectUser(ref) {
+      return this.showProjectService.saveProjectUser(this._entityId, this.projectUserForm.value).subscribe(() => {
+        this.toast.showToast('success', this.constants.PROJECT_OPERATION_SUCCESS,
+          'Project Settings saved successfully.');
+        this.loadProjectInfo();
+        ref.close();
+      },
+      () => {
+        this.toast.showToast('danger', this.constants.PROJECT_OPERATION_FAILURE,
+          this.constants.PROJECT_OPERATION_FAILURES);
+      });
+  }
+
+  flipped = false;
+
+  toggleView() {
+    this.flipped = !this.flipped;
   }
 }

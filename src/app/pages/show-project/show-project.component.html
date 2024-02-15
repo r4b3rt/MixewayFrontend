@@ -1,5 +1,5 @@
 <div class="row">
-  <div class="col-12 col-sm-6 col-md-8">
+  <div class="col-md-8">
     <nb-card>
       <h3> {{ risk?.projectName }} <button *ngIf="showVulnAuditor" (click)="displayProjectGlobalSettings()" nbButton status="primary" nbTooltip="Vuln Auditor Settings" style="float:right; margin-top:5px; margin-left:5px;"><nb-icon icon="briefcase-outline"></nb-icon></button></h3>
     </nb-card>
@@ -19,34 +19,24 @@
     </nb-card>
   </div>
 </div>
-<div class="row">
-  <div [ngClass]="ciOperations?.length > 0 ? 'col-8':'col-12'">
-    <div class="row">
-      <div class="col-6" [ngClass]="ciOperations?.length > 0 ? 'col-sm-6':'col-sm-3'">
-        <ngx-summary-card [cardDetails]="infraRiskCard"></ngx-summary-card>
-      </div>
-      <div class="col-6" [ngClass]="ciOperations?.length > 0 ? 'col-sm-6':'col-sm-3'">
-        <ngx-summary-card [cardDetails]="webAppRiskCard"></ngx-summary-card>
-      </div><br/>
-      <div class="col-6" [ngClass]="ciOperations?.length > 0 ? 'col-sm-6':'col-sm-3'">
-        <ngx-summary-card [cardDetails]="codeRiskCard"></ngx-summary-card>
-      </div>
-      <div class="col-6" [ngClass]="ciOperations?.length > 0 ? 'col-sm-6':'col-sm-3'">
-        <ngx-summary-card [cardDetails]="openSourceCard"></ngx-summary-card>
-      </div>
-    </div>
+
+<div class="row" style="display:flex; align-items: center">
+  <div [class]="ciOperations?.length > 0 ? 'col-md-8' : 'col-md-12'" style="margin: 0 auto;">
+    <ngx-status-card [projectInfo]="projectInfo" [projectStats]="projectStats"></ngx-status-card>
   </div>
   <div *ngIf="ciOperations?.length > 0" class="col-md-4">
-    <ngx-ci-operations [ciOperations]="ciOperations"></ngx-ci-operations>
+    <ngx-ci-operations [ciOperations]="ciOperations" [chartValue]="ciOperationSuccessRate"></ngx-ci-operations>
   </div>
-
-  <!--<div class="col-6 col-sm-3">
-    <ngx-summary-card [cardDetails]="auditRiskCard"></ngx-summary-card>
-  </div> -->
 </div>
+
 <ngx-configure-tables *ngIf="showConfigTableTemplate" [scannerTypes]="scannerTypes"></ngx-configure-tables>
-<ngx-show-project-details-chart *ngIf="showDetailsTemplate"></ngx-show-project-details-chart>
-<ngx-details-tables *ngIf="showDetailsTemplate"></ngx-details-tables>
+
+
+<ngx-trend-chart *ngIf="showDetailsTemplate" [severities]="severities" [showDetailsTemplate]="showDetailsTemplate" [class.hidden]="!showConfigTemplate"></ngx-trend-chart>
+
+
+<ngx-details-tables id="detailsTables" *ngIf="showDetailsTemplate"></ngx-details-tables>
+
 <ng-template #vulnAuditorSettings let-data let-ref="dialogRef">
   <nb-card>
     <nb-card-header>Global settings, would be applied if object doesn't have setting specified</nb-card-header>
@@ -72,8 +62,19 @@
         </div>
         <button type="submit" nbButton status="danger">{{constants.PROJECT_SAVE}}</button>
       </form>
+
+      <form [formGroup]="projectUserForm" (ngSubmit)="saveProjectUser(ref)">
+
+
+        <div class="form-group">
+          <label for="userProject" class="label">Who grant access to?</label>
+          <input type="text" nbInput fullWidth id="userProject" placeholder="username" formControlName="user">
+        </div>
+        <button type="submit" nbButton status="danger">{{constants.PROJECT_SAVE}}</button>
+      </form>
     </nb-card-body>
   </nb-card>
+
 </ng-template>
 <ng-template #showInstructions let-data let-ref="showInstructions">
   <nb-card>
@@ -91,3 +92,5 @@
     </nb-card-footer>
   </nb-card>
 </ng-template>
+
+

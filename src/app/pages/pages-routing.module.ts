@@ -12,6 +12,9 @@ import {SearchComponent} from './search/search.component';
 import {VulnAnalyzeComponent} from './vuln-analyze/vuln-analyze.component';
 import {UserProfileComponent} from './user-profile/user-profile.component';
 import {KnowlegeBaseComponent} from './knowlege-base/knowlege-base.component';
+import {ScansComponent} from './scans/scans.component';
+import {GlobalStatisticComponent} from './global-statistic/global-statistic.component';
+import {StatsDashboardComponent} from './stats-dashboard/stats-dashboard.component';
 
 const routes: Routes = [{
   path: '',
@@ -22,12 +25,20 @@ const routes: Routes = [{
       component: MixerDashboardComponent,
     },
     {
+      path: 'dashboard-stat',
+      component: StatsDashboardComponent,
+    },
+    {
       path: 'show/project/:projectid',
       component: ShowProjectComponent,
     },
     {
       path: 'vulns',
       component: VulnsComponent,
+    },
+    {
+      path: 'global-statistics',
+      component: GlobalStatisticComponent,
     },
     {
       path: 'cicd',
@@ -48,6 +59,10 @@ const routes: Routes = [{
     {
       path: 'kb',
       component: KnowlegeBaseComponent,
+    },
+    {
+      path: 'scans',
+      component: ScansComponent,
     },
     {
       path: 'search/:search',

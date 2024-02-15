@@ -6,9 +6,10 @@
     "changeOrigin": true,
     "pathRewrite": {
       "^/api": ""
-    }
+    },
+    "headers": {"Host":"localhost:4200"}
   },
-  "/swagger-ui.html/*": {
+  "/swagger-ui/*": {
     "target": "https://localhost:8443",
     "secure": false,
     "logLevel": "debug",
@@ -42,6 +43,7 @@
     "changeOrigin": true,
     "pathRewrite": {
       "^/api": ""
-    }
+    },
+    "headers": {"Host":"localhost:4200"}
   }
 }

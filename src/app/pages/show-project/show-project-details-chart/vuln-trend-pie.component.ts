@@ -1,9 +1,10 @@
-import { Component, OnDestroy } from '@angular/core';
+import {AfterViewInit, Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges} from '@angular/core';
 import { NbThemeService } from '@nebular/theme';
 import {ShowProjectService} from '../../../@core/service/ShowProjectService';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Severities} from '../../../@core/Model/Severities';
 import {ProjectConstants} from '../../../@core/constants/ProjectConstants';
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'ngx-vuln-trend-pie',
@@ -11,99 +12,60 @@ import {ProjectConstants} from '../../../@core/constants/ProjectConstants';
     <div echarts [options]="options" class="echart"></div>
   `,
 })
-export class VulnTrendPieComponent implements OnDestroy {
+export class VulnTrendPieComponent implements OnDestroy, OnInit, AfterViewInit, OnChanges {
   options: any = {};
   themeSubscription: any;
   _entityId: number;
-  severities: Severities;
   constants: ProjectConstants = new ProjectConstants();
+  @Input() severities: Severities;
 
   constructor(private theme: NbThemeService, private showProjectService: ShowProjectService,
-              private _route: ActivatedRoute, private router: Router) {
+              private _route: ActivatedRoute, private router: Router, private cdr: ChangeDetectorRef) {
     this._entityId = +this._route.snapshot.paramMap.get('projectid');
     if (!this._entityId) {
       this.router.navigate(['/pages/dashboard']);
     }
-    this.loadSeveritiesChart();
+
   }
-  loadSeveritiesChart() {
-    return this.showProjectService.getSeverityChart(this._entityId).subscribe(data => {
-      this.severities = data;
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['severities']) {
       this.drawChart();
-    });
+    }
   }
 
+  ngOnInit() {
+  }
+  ngAfterViewInit() {
+    this.cdr.detectChanges();
+  }
   drawChart() {
-    this.themeSubscription = this.theme.getJsTheme().subscribe(config => {
-      const colors = config.variables;
-      const echarts: any = config.variables.echarts;
+    this.options = {
+      xAxis: {
+        type: 'category',
+        data: ['Critical', 'High', 'Medium', 'Low'],
+      },
+      yAxis: {
+        type: 'value',
+      },
+      series: [
+        {
+          data: [
+            { value: this.severities?.Critical, itemStyle: { color: '#F74646' } },
+            { value: this.severities?.High, itemStyle: { color: '#EBC04A' } },
+            { value: this.severities?.Medium, itemStyle: { color: '#A4EEDA' } },
+            { value: this.severities?.Low, itemStyle: { color: '#9FFAF1' } },
 
-      this.options = {
-        backgroundColor: echarts.bg,
-        color: [ colors.successLight, colors.primaryLight, colors.warningLight, colors.dangerLight ].reverse(),
-        tooltip: {
-          trigger: 'item',
-          formatter: '{a} <br/>{b} : {c} ({d}%)',
+          ],
+          type: 'bar',
         },
-        legend: {
-          orient: 'vertical',
-          left: 'left',
-          data: ['Low', 'Medium', 'High', 'Critic'],
-          textStyle: {
-            color: echarts.textColor,
-          },
-        },
-        series: [
-          {
-            name: this.constants.PROJECT_CHARTS_SEVERITY_TITLE,
-            type: 'pie',
-            radius: '80%',
-            center: ['50%', '50%'],
-            data: [
-              {
-                'name': 'Critic',
-                'value': this.severities.Critical,
-              },
-              {
-                'name': 'High',
-                'value': this.severities.High,
-              },
-              {
-                'name': 'Medium',
-                'value': this.severities.Medium,
-              },
-              {
-                'name': 'Low',
-                'value': this.severities.Low,
-              },
-            ],
-            itemStyle: {
-              emphasis: {
-                shadowBlur: 10,
-                shadowOffsetX: 0,
-                shadowColor: echarts.itemHoverShadowColor,
-              },
-            },
-            label: {
-              normal: {
-                textStyle: {
-                  color: echarts.textColor,
-                },
-              },
-            },
-            labelLine: {
-              normal: {
-                lineStyle: {
-                  color: echarts.axisLineColor,
-                },
-              },
-            },
-          },
-        ],
-      };
-    });
+      ],
+    };
   }
 
   ngOnDestroy(): void {
+    if (this.themeSubscription) {
+      this.themeSubscription.unsubscribe();
+    }
   }
+
 }

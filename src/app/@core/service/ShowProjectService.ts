@@ -25,6 +25,11 @@ import {CiOperations} from '../Model/CiOperations';
 import {Vulnerability} from '../Model/Vulnerability';
 import {ProjectInfo} from '../Model/ProjectInfo';
 import {IaasApiType} from '../Model/IaasApiType';
+import {ProjectStats} from '../Model/ProjectStats';
+import {ProjectAudit} from '../Model/ProjectAudit';
+import {ProjectDetailsAudit} from '../Model/ProjectDetailsAudit';
+import {ProjectUser} from '../Model/ProjectUser';
+import {DetailStats} from '../Model/DetailStats';
 
 @Injectable({
   providedIn: 'root',
@@ -119,7 +124,7 @@ export class ShowProjectService {
       );
   }
   getDTrackProjects(): Observable<DTrackProject[]> {
-    return this.http.get<DTrackProject[]>(environment.backend + this.showProjectPath + '/dtrackprojects')
+    return this.http.get<DTrackProject[]>(environment.backend + this.showProjectPath + '/opensourceprojects')
       .pipe(
         retry(1),
         catchError(this.errorHandl),
@@ -443,6 +448,13 @@ export class ShowProjectService {
         catchError(this.errorHandl),
       );
   }
+  getProjectStats(id) {
+    return this.http.get<ProjectStats>(environment.backend + this.showProjectPath + '/' + id + '/stats')
+      .pipe(
+        retry(1),
+        catchError(this.errorHandl),
+      );
+  }
   putProjectToRemote(projectId: number, codeProjectId: number) {
     return this.http.put<SastProject[]>(environment.backend + this.showProjectPath + '/' + projectId + '/createremoteproject/' + codeProjectId, null)
       .pipe(
@@ -465,8 +477,49 @@ export class ShowProjectService {
         catchError(this.errorHandl),
       );
   }
+  getProjectVulnAudit(projectid): Observable<ProjectAudit[]> {
+    return this.http.get<ProjectAudit[]>(environment.backend + '/show/project/audit/project/' + projectid )
+      .pipe(
+        retry(1),
+        catchError(this.errorHandl),
+      );
+  }
+  getProjectVulnDetailsAudit(projectid): Observable<ProjectDetailsAudit> {
+    return this.http.get<ProjectDetailsAudit>(environment.backend +
+      '/show/project/audit/project/stats/' + projectid )
+      .pipe(
+        retry(1),
+        catchError(this.errorHandl),
+      );
+  }
+
+  getHistoryForVuln(id, body, source): Observable<ProjectAudit[]> {
+    return this.http.post<ProjectAudit[]>(environment.backend + '/show/project/audit/' + source + '/' + id, body)
+      .pipe(
+        retry(1),
+        catchError(this.errorHandl),
+      );
+  }
+
+
   getIaasApiTypes(): Observable<IaasApiType[]> {
     return this.http.get<IaasApiType[]>(environment.backend + this.showProjectPath + '/iaasapitype')
+      .pipe(
+        retry(1),
+        catchError(this.errorHandl),
+      );
+  }
+
+  getDetailStats(projectid): Observable<DetailStats> {
+    return this.http.get<DetailStats>(environment.backend + '/show/project/' + projectid + '/detailstats' )
+      .pipe(
+        retry(1),
+        catchError(this.errorHandl),
+      );
+  }
+
+  saveProjectUser(id, settings) {
+    return this.http.post<ProjectUser[]>(environment.backend + '/show/project/' + id + '/user/add', settings)
       .pipe(
         retry(1),
         catchError(this.errorHandl),

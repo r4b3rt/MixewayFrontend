@@ -3,10 +3,13 @@ on:
   push:
     branches:
       - '*'
+      - 'feature/*'
+      - 'refactor/*'
       - '!master'
   pull_request:
     branches:
       - '*'
+      - 'refactor/*'
       - '!master'
 jobs:
   mixeway-scan:
@@ -28,15 +31,18 @@ jobs:
           docker run -e MODE=STANDALONE -e OSS_USERNAME=${{ secrets.oss_username }} -e OSS_KEY=${{ secrets.oss_key }} -e COMMIT_ID=${{ steps.vars.outputs.sha_short }} -e BRANCH=${{ steps.vars.outputs.branch }} -e MIXEWAY_PROJECT_NAME=${{ github.event.repository.name }} -e MIXEWAY_PROJECT_ID=${{ secrets.mixeway_project_id }} -e MIXEWAY_KEY=${{ secrets.mixeway_key }} -v $PWD:/opt/sources mixeway/scanner:latest
 
   publishbeta:
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
+      - name: Set Release version
+        run: |
+          echo "RELEASE_VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
       - name: docker actions build & deploy
         uses: docker/build-push-action@v1
         with:
           username: ${{ secrets.DOCKER_USER }}
           password: ${{ secrets.DOCKER_TOKEN }}
           repository: mixeway/frontend
-          tags: 1.3.0-beta
+          tags: ${{ env.RELEASE_VERSION }}-beta
         env:
           NODE_OPTIONS: –-max_old_space_size=8192

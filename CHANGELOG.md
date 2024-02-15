@@ -1,3 +1,57 @@
+## 1.8.2 (2023-11-08)
+
+#### New Features
+* Additional statistics such as average time to fix, percent of solved critical vulnerabilities
+* New widgets in show-project tabs replacing bugable gauge chart
+
+#### Bug Fixes
+* removing trend area in configuration of the project space 
+
+## 1.8.1 (2023-09-21)
+
+#### New Features
+* Grouping vulnerabilities via branch (affect only vulnerabilities in code)
+
+## 1.8.0 (2023-08-08)
+
+#### New Features
+* Refreshed show project page with additional statistic
+* Project vulnerability timeline
+* Vulnerability timeline
+* More other stats like average time to fix vulnerability
+
+#### Updates
+* Updated to angular 14 and ngx-admin 10
+
+#### Bug Fixes
+* fixed problem with not refreshed gauge chart with project threat rating
+
+## 1.7.1 (2023-01-23)
+
+#### New Features
+* Simplified statistics page
+
+
+## 1.7.0 (2023-01-23)
+
+#### Bug Fixes
+* Fixed bug with caused sometimes failure in creating synchronization with SCA
+
+#### New Features
+* Nexus-IQ Integration
+
+## 1.6.3 (2022-07-28)
+
+#### New Features
+* Adding global statistics for admin acceess
+
+
+## 1.6.1 (2022-05-07)
+
+#### Bug Fixes
+* Fixed bug related with improper view of the status in codeproject opensource scanner integration (https://github.com/Mixeway/MixewayFrontend/issues/57)
+* Fixed bug related with not opened vulnerability details
+
 <a name="1.3.0"></a>
 ## 1.3.0 (2020-05-31)
 

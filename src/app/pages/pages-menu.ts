@@ -7,6 +7,11 @@ export const MENU_ITEMS: NbMenuItem[] = [
     link: '/pages/dashboard',
   },
   {
+    title: 'Dashboard - Statistics',
+    icon: 'globe-2-outline',
+    link: '/pages/dashboard-stat',
+  },
+  {
     title: 'Statistics',
     group: true,
   },
@@ -26,8 +31,18 @@ export const MENU_ITEMS: NbMenuItem[] = [
     link: '/pages/kb',
   },
   {
+    title: 'Scan Manager',
+    icon: 'activity-outline',
+    link: '/pages/scans',
+  },
+  {
     title: 'Settings',
     group: true,
+  },
+  {
+    title: 'Global Statistics',
+    icon: 'pie-chart-outline',
+    link: '/pages/global-statistics',
   },
   {
     title: 'Admin Zone',

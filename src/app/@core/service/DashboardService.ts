@@ -9,6 +9,8 @@ import {Project} from '../Model/Project';
 import {SessionOwner} from '../Model/SessionOwner';
 // @ts-ignore
 import {SearchResponse} from '../Model/SearchResponse';
+import {DashboardTopStatistics} from '../Model/DashboardTopStatistics';
+import {DashboardStat} from '../Model/DashboardStat';
 
 
 @Injectable({
@@ -29,6 +31,13 @@ export class DashboardService {
   // GET
   search(search): Observable<SearchResponse> {
     return this.http.post<SearchResponse>(environment.backend + '/dashboard/search', search, this.httpOptions)
+      .pipe(
+        retry(1),
+        catchError(this.errorHandl),
+      );
+  }
+  stats(): Observable<DashboardStat> {
+    return this.http.get<DashboardStat>(environment.backend + '/dashboard/stat')
       .pipe(
         retry(1),
         catchError(this.errorHandl),
@@ -62,6 +71,13 @@ export class DashboardService {
         catchError(this.errorHandl),
       );
   }
+  getRootStatistics(): Observable<DashboardTopStatistics> {
+    return this.http.get<DashboardTopStatistics>(environment.backend + '/dashboard/statistics')
+      .pipe(
+        retry(1),
+        catchError(this.errorHandl),
+      );
+  }
   deleteProject(id): Observable<null> {
     return this.http.delete<null>(environment.backend + '/dashboard/projects/' + id)
       .pipe(
@@ -79,6 +95,14 @@ export class DashboardService {
   }
   editProject(id, project): Observable<null> {
     return this.http.patch<null>(environment.backend + '/dashboard/projects/' + id, project)
+      .pipe(
+        retry(1),
+        catchError(this.showErrorOnDelete),
+      );
+  }
+  moergeProjects(source, destination) {
+    return this.http.get<null>(environment.backend + '/dashboard/merge/project/source/'
+      + source + '/destination/' + destination)
       .pipe(
         retry(1),
         catchError(this.showErrorOnDelete),

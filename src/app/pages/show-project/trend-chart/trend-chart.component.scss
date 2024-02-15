@@ -1,0 +1,73 @@
+@import '../../../@theme/styles/themes';
+
+@include nb-install-component() {
+  .summary-container {
+    display: flex;
+    flex-wrap: wrap;
+    flex: 1;
+    background-color: nb-theme(background-basic-color-2);
+    justify-content: space-between;
+    padding: 1.5rem 4rem 1rem;
+    border: 1px solid nb-theme(border-basic-color-3);
+    border-left: none;
+    border-right: none;
+  }
+  .chart-container {
+    flex: 1;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  nb-card {
+    position: relative;
+  }
+
+  .flip-icon {
+    position: absolute;
+    right: 0.625rem;
+    top: 1rem;
+    @include nb-rtl(right, auto);
+    @include nb-rtl(left, 0.625rem);
+    cursor: pointer;
+  }
+
+  ::ng-deep .flipped {
+    .back-container {
+      .flip-icon {
+        transform: scaleX(-1);
+      }
+    }
+
+    .front-container {
+      .flip-icon {
+        display: none;
+      }
+    }
+  }
+
+  ngx-summary-card {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  ::ng-deep nb-card-body {
+    overflow: hidden;
+    display: flex;
+  }
+}
+
+::ng-deep .ng-invalid:not(form) {
+  background-color: lightcoral;
+}
+::ng-deep .right {
+  float: right;
+}
+h3 {
+  text-align: center;
+}
+:host ::ng-deep ng2-smart-table table tr td {
+  font-size:0.9em;
+  word-break: break-all;
+}
